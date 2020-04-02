@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.com/kernle32dll/eq.svg?branch=master)](https://travis-ci.com/kernle32dll/eq)
-[![GoDoc](https://godoc.org/github.com/kernle32dll/eq?status.svg)](http://godoc.org/github.com/kernle32dll/eq)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kernle32dll/eq)](https://goreportcard.com/report/github.com/kernle32dll/eq)
-[![codecov](https://codecov.io/gh/kernle32dll/eq/branch/master/graph/badge.svg)](https://codecov.io/gh/kernle32dll/eq)
+[![Build Status](https://travis-ci.com/kernle32dll/ew.svg?branch=master)](https://travis-ci.com/kernle32dll/ew)
+[![GoDoc](https://godoc.org/github.com/kernle32dll/ew?status.svg)](http://godoc.org/github.com/kernle32dll/ew)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kernle32dll/ew)](https://goreportcard.com/report/github.com/kernle32dll/ew)
+[![codecov](https://codecov.io/gh/kernle32dll/ew/branch/master/graph/badge.svg)](https://codecov.io/gh/kernle32dll/ew)
 
 # ew
 
