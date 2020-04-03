@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/kernle32dll/ew/internal"
 	"github.com/kernle32dll/ew/internal/gr"
 
 	"fmt"
@@ -29,9 +30,13 @@ func (c MigrateCommand) Execute() error {
 		return err
 	}
 
-	conf, err := gr.ParseConfigFromGr(home+"/.grconfig.json", c.convertToYaml)
+	conf, err := gr.ParseConfigFromGr(home + "/.grconfig.json")
 	if err != nil {
 		return err
+	}
+
+	if c.convertToYaml {
+		conf.Source = internal.YamlSrc
 	}
 
 	migratedPath, err := conf.WriteConfig(home)

@@ -13,7 +13,7 @@ type config struct {
 
 type tags map[string][]string
 
-func ParseConfigFromGr(filename string, convertToYaml bool) (internal.Config, error) {
+func ParseConfigFromGr(filename string) (internal.Config, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return internal.Config{}, err
@@ -27,14 +27,8 @@ func ParseConfigFromGr(filename string, convertToYaml bool) (internal.Config, er
 		return internal.Config{}, err
 	}
 
-	// If we come from gr, default to json
-	newSource := internal.JsonSrc
-	if convertToYaml {
-		newSource = internal.YamlSrc
-	}
-
 	return internal.Config{
-		Source: newSource,
+		Source: internal.JsonSrc,
 		Tags:   map[string][]string(config.Tags),
 	}, nil
 }
