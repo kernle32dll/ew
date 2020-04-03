@@ -13,6 +13,8 @@ type config struct {
 
 type tags map[string][]string
 
+// ParseConfigFromGr tries to parse an config file from the
+// original mixu/gr json config.
 func ParseConfigFromGr(filename string) (internal.Config, error) {
 	f, err := os.Open(filename)
 	if err != nil {

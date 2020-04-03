@@ -9,6 +9,8 @@ import (
 	"io"
 )
 
+// ListPathsGroupedCommand lists all paths, sorted, and
+// grouped by their respective tags (which are also sorted).
 type ListPathsGroupedCommand struct {
 	output io.Writer
 	config internal.Config
@@ -16,6 +18,7 @@ type ListPathsGroupedCommand struct {
 	forTags []string
 }
 
+// NewListPathsGroupedCommand creates a new ListPathsGroupedCommand.
 func NewListPathsGroupedCommand(
 	output io.Writer,
 	config internal.Config,

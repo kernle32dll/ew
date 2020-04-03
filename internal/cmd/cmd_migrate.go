@@ -9,11 +9,14 @@ import (
 	"os"
 )
 
+// MigrateCommand reads an existing gr config, and persists an
+// migrated copy as a new ew config.
 type MigrateCommand struct {
 	output        io.Writer
 	convertToYaml bool
 }
 
+// NewMigrateCommand creates a new MigrateCommand.
 func NewMigrateCommand(
 	output io.Writer,
 	convertToYaml bool,

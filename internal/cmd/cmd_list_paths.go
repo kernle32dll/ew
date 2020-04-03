@@ -7,6 +7,8 @@ import (
 	"io"
 )
 
+// ListPathsCommand lists all paths of the given tags,
+// in sorted order (but order is tag agnostic).
 type ListPathsCommand struct {
 	output io.Writer
 	config internal.Config
@@ -14,6 +16,7 @@ type ListPathsCommand struct {
 	forTags []string
 }
 
+// NewListPathsCommand creates a new ListPathsCommand.
 func NewListPathsCommand(
 	output io.Writer,
 	config internal.Config,

@@ -10,6 +10,9 @@ import (
 	"os/exec"
 )
 
+// AnyCommand is the "do-it-all" command, which allows to
+// execute a user-supplied command for all paths of the given
+// tags. Paths are in sorted order, but are sorted tag agnostic.
 type AnyCommand struct {
 	output io.Writer
 	config internal.Config
@@ -18,6 +21,7 @@ type AnyCommand struct {
 	args    []string
 }
 
+// NewAnyCommand creates a new AnyCommand.
 func NewAnyCommand(
 	output io.Writer,
 	config internal.Config,

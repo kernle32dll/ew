@@ -8,10 +8,15 @@ import (
 	"strings"
 )
 
+// Command is an abstraction of an executable command
 type Command interface {
+	// Execute executes the command, and returns an error if any occurred.
+	// Note, errors are always assumed fatal - non-technical problems don't warrant errors.
 	Execute() error
 }
 
+// ParseCommand parses the given arguments for a command to apply, and configures it with
+// the given output stream and tag config.
 func ParseCommand(output io.Writer, conf internal.Config, args []string) (Command, error) {
 	if len(args) == 0 {
 		return NewListPathsGroupedCommand(output, conf, conf.GetTagsSorted()), nil

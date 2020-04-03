@@ -12,6 +12,9 @@ import (
 	"strings"
 )
 
+// StatusCommand prints out an opinionated git short-summary
+// for all paths of the given tags. Paths are in sorted order,
+// but are sorted tag agnostic.
 type StatusCommand struct {
 	output io.Writer
 	config internal.Config
@@ -19,6 +22,7 @@ type StatusCommand struct {
 	forTags []string
 }
 
+// NewStatusCommand creates a new StatusCommand.
 func NewStatusCommand(
 	output io.Writer,
 	config internal.Config,

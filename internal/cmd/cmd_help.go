@@ -8,10 +8,12 @@ import (
 	"strings"
 )
 
+// HelpCommand prints out the CLI help.
 type HelpCommand struct {
 	output io.Writer
 }
 
+// NewHelpCommand creates a new HelpCommand.
 func NewHelpCommand(
 	output io.Writer,
 ) *HelpCommand {

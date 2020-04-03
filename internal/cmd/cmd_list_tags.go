@@ -9,11 +9,13 @@ import (
 	"io"
 )
 
+// ListTagsCommand lists all tags in sorted order.
 type ListTagsCommand struct {
 	output io.Writer
 	config internal.Config
 }
 
+// NewListTagsCommand creates a new ListTagsCommand.
 func NewListTagsCommand(
 	output io.Writer,
 	config internal.Config,
