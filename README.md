@@ -8,6 +8,9 @@
 ew - short for `(run things) e(very)w(here)` is a tool for grouping folders by tags,
 and executing tasks in all folders via these tags.
 
+**Note**: Currently it is not possible to add or remove folders to tags via the cli.
+See paragraph "Config" below, to see how to do this manually.
+
 ## How to use
 
 COMMAND                           | DESCRIPTION
@@ -28,3 +31,98 @@ ew tags rm \some\path @some-tag   |   add \some\path to tag "some-tag" (NOT YET 
 ew status                         |   show quick git status for all paths
 ew @tag1 status                   |   show quick git status for all paths of tag1 (supports multiple tags)
 ew @tag1 some-cmd                 |   executes some-cmd in all paths of tag1 (supports multiple tags)
+
+## Examples
+
+```shell script
+[bgerda@voidlight ~]$ ew @github status 
+/home/bgerda/github-git/kernle32dll/emissione-go               master     Clean          @github     
+/home/bgerda/github-git/kernle32dll/httpbulk-go                master     Clean          @github     
+/home/bgerda/github-git/kernle32dll/jwtcache-go                master     Clean          @github     
+/home/bgerda/github-git/kernle32dll/nullable                   master     Clean          @github     
+/home/bgerda/github-git/kernle32dll/planlagt                   master     1 modified     @github     
+/home/bgerda/github-git/kernle32dll/pooler-go                  master     Clean          @github     
+/home/bgerda/github-git/kernle32dll/synchronized-cron-task     master     Clean          @github     
+/home/bgerda/github-git/kernle32dll/turtleware                 master     Clean          @github
+```
+
+```shell script
+[bgerda@voidlight ~]$ ew @github git pull
+
+in /home/bgerda/github-git/kernle32dll/emissione-go:
+
+Already up to date.
+
+in /home/bgerda/github-git/kernle32dll/httpbulk-go:
+
+Already up to date.
+
+in /home/bgerda/github-git/kernle32dll/jwtcache-go:
+
+Already up to date.
+
+in /home/bgerda/github-git/kernle32dll/nullable:
+
+Already up to date.
+
+in /home/bgerda/github-git/kernle32dll/planlagt:
+
+Already up to date.
+
+in /home/bgerda/github-git/kernle32dll/pooler-go:
+
+Already up to date.
+
+in /home/bgerda/github-git/kernle32dll/synchronized-cron-task:
+
+Already up to date.
+
+in /home/bgerda/github-git/kernle32dll/turtleware:
+
+Already up to date.
+
+```
+
+## Config
+
+Per default, ew tries to loads its config from either `~/.ewconfig.yml` or `~/.ewconfig.json`. The default
+is  `~/.ewconfig.yml`, if you are migrating from `gr` its `~/.ewconfig.json`.
+
+The config file looks as follows:
+
+`~/.ewconfig.yml`
+```yaml
+tags:
+  server:
+  - /home/bgerda/tc-git/turtlecoding/common/server-common
+  github:
+  - /home/bgerda/github-git/kernle32dll/emissione-go
+  - /home/bgerda/github-git/kernle32dll/httpbulk-go
+  - /home/bgerda/github-git/kernle32dll/jwtcache-go
+  - /home/bgerda/github-git/kernle32dll/nullable
+  - /home/bgerda/github-git/kernle32dll/planlagt
+  - /home/bgerda/github-git/kernle32dll/pooler-go
+  - /home/bgerda/github-git/kernle32dll/synchronized-cron-task
+  - /home/bgerda/github-git/kernle32dll/turtleware
+```
+
+`~/.ewconfig.json`
+```json
+{
+  "tags": {
+    "server": [
+      "/home/bgerda/tc-git/turtlecoding/common/server-common"
+    ],
+    "github": [
+      "/home/bgerda/github-git/kernle32dll/emissione-go",
+      "/home/bgerda/github-git/kernle32dll/httpbulk-go",
+      "/home/bgerda/github-git/kernle32dll/jwtcache-go",
+      "/home/bgerda/github-git/kernle32dll/nullable",
+      "/home/bgerda/github-git/kernle32dll/planlagt",
+      "/home/bgerda/github-git/kernle32dll/pooler-go",
+      "/home/bgerda/github-git/kernle32dll/synchronized-cron-task",
+      "/home/bgerda/github-git/kernle32dll/turtleware"
+    ]
+  }
+}
+```
