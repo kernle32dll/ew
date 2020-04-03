@@ -4,6 +4,7 @@ import (
 	"github.com/kernle32dll/ew/internal"
 
 	"errors"
+	"io"
 	"strings"
 )
 
@@ -11,38 +12,29 @@ type Command interface {
 	Execute() error
 }
 
-func ParseCommand(conf internal.Config, args []string) (Command, error) {
+func ParseCommand(output io.Writer, conf internal.Config, args []string) (Command, error) {
 	if len(args) == 0 {
-		return &ListPathsGroupedCommand{
-			config:  conf,
-			forTags: conf.GetTagsSorted(),
-		}, nil
+		return NewListPathsGroupedCommand(output, conf, conf.GetTagsSorted()), nil
 	}
 
 	if args[0] == "help" {
-		return &HelpCommand{}, nil
+		return NewHelpCommand(output), nil
 	}
 
 	if args[0] == "migrate" {
-		return &MigrateCommand{
-			convertToYaml: len(args) == 2 && args[1] == "--yaml",
-		}, nil
+		return NewMigrateCommand(output, len(args) == 2 && args[1] == "--yaml"), nil
 	}
 
 	// List all paths
 	if args[0] == "paths" {
 		if len(args) == 1 || args[1] == "list" {
-			return &ListPathsCommand{
-				config: conf,
-			}, nil
+			return NewListPathsCommand(output, conf, nil), nil
 		}
 	}
 
 	if args[0] == "tags" {
 		if len(args) == 1 || args[1] == "list" {
-			return &ListTagsCommand{
-				config: conf,
-			}, nil
+			return NewListTagsCommand(output, conf), nil
 		}
 
 		if args[1] == "add" {
@@ -58,32 +50,18 @@ func ParseCommand(conf internal.Config, args []string) (Command, error) {
 	tags, rest := parseTags(conf, args)
 
 	if len(rest) == 0 || (len(rest) == 1 && rest[0] == "list") {
-		return &ListPathsCommand{
-			config:  conf,
-			forTags: tags,
-		}, nil
+		return NewListPathsCommand(output, conf, tags), nil
 	}
 
 	if (len(rest) == 1 || len(rest) == 2) && rest[0] == "status" {
 		if len(rest) == 2 && rest[1] == "-v" {
-			return &AnyCommand{
-				config:  conf,
-				forTags: tags,
-				args:    []string{"git", "status", "-sb"},
-			}, nil
+			return NewAnyCommand(output, conf, tags, []string{"git", "status", "-sb"}), nil
 		}
 
-		return &StatusCommand{
-			config:  conf,
-			forTags: tags,
-		}, nil
+		return NewStatusCommand(output, conf, tags), nil
 	}
 
-	return &AnyCommand{
-		config:  conf,
-		forTags: tags,
-		args:    rest,
-	}, nil
+	return NewAnyCommand(output, conf, tags, rest), nil
 }
 
 func parseTags(config internal.Config, args []string) ([]string, []string) {

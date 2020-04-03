@@ -4,11 +4,23 @@ import (
 	"github.com/kernle32dll/ew/internal/gr"
 
 	"fmt"
+	"io"
 	"os"
 )
 
 type MigrateCommand struct {
+	output        io.Writer
 	convertToYaml bool
+}
+
+func NewMigrateCommand(
+	output io.Writer,
+	convertToYaml bool,
+) *MigrateCommand {
+	return &MigrateCommand{
+		output:        output,
+		convertToYaml: convertToYaml,
+	}
 }
 
 func (c MigrateCommand) Execute() error {

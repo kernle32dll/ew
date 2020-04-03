@@ -3,15 +3,27 @@ package cmd
 import (
 	"github.com/kernle32dll/ew/internal"
 
-	"github.com/fatih/color"
-
 	"fmt"
+	"io"
 )
 
 type ListPathsCommand struct {
+	output io.Writer
 	config internal.Config
 
 	forTags []string
+}
+
+func NewListPathsCommand(
+	output io.Writer,
+	config internal.Config,
+	forTags []string,
+) *ListPathsCommand {
+	return &ListPathsCommand{
+		output:  output,
+		config:  config,
+		forTags: forTags,
+	}
 }
 
 func (c ListPathsCommand) Execute() error {
@@ -23,14 +35,14 @@ func (c ListPathsCommand) Execute() error {
 	}
 
 	if len(paths) == 0 {
-		fmt.Println()
-		fmt.Fprintln(color.Output, determinateNoPathsErrorMessage(c.forTags))
-		fmt.Println()
+		fmt.Fprintln(c.output)
+		fmt.Fprintln(c.output, determinateNoPathsErrorMessage(c.forTags))
+		fmt.Fprintln(c.output)
 		return nil
 	}
 
 	for _, path := range paths {
-		fmt.Fprintln(color.Output, colorPath(path))
+		fmt.Fprintln(c.output, colorPath(path))
 	}
 
 	return nil

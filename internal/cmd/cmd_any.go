@@ -6,14 +6,30 @@ import (
 	"github.com/fatih/color"
 
 	"fmt"
+	"io"
 	"os/exec"
 )
 
 type AnyCommand struct {
+	output io.Writer
 	config internal.Config
 
 	forTags []string
 	args    []string
+}
+
+func NewAnyCommand(
+	output io.Writer,
+	config internal.Config,
+	forTags []string,
+	args []string,
+) *AnyCommand {
+	return &AnyCommand{
+		output:  output,
+		config:  config,
+		forTags: forTags,
+		args:    args,
+	}
 }
 
 func (c AnyCommand) Execute() error {
@@ -25,25 +41,25 @@ func (c AnyCommand) Execute() error {
 	}
 
 	if len(paths) == 0 {
-		fmt.Println()
-		fmt.Fprintln(color.Output, determinateNoPathsErrorMessage(c.forTags))
-		fmt.Println()
+		fmt.Fprintln(c.output)
+		fmt.Fprintln(c.output, determinateNoPathsErrorMessage(c.forTags))
+		fmt.Fprintln(c.output)
 		return nil
 	}
 
 	for _, path := range paths {
-		fmt.Println()
-		fmt.Fprintln(color.Output, colorPath("in "+path)+":")
-		fmt.Println()
+		fmt.Fprintln(c.output)
+		fmt.Fprintln(c.output, colorPath("in "+path)+":")
+		fmt.Fprintln(c.output)
 
 		cmd := exec.Command(c.args[0], c.args[1:]...)
 		cmd.Dir = path
 
-		cmd.Stdout = color.Output
-		cmd.Stderr = color.Output
+		cmd.Stdout = c.output
+		cmd.Stderr = c.output
 
 		if err := cmd.Run(); err != nil {
-			color.Red(err.Error())
+			fmt.Fprintln(c.output, color.RedString(err.Error()))
 		}
 	}
 

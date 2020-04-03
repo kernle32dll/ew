@@ -1,26 +1,30 @@
 package cmd
 
 import (
-	"github.com/kernle32dll/ew/internal"
-
 	"github.com/fatih/color"
 
 	"fmt"
+	"io"
 	"strings"
 )
 
 type HelpCommand struct {
-	config internal.Config
+	output io.Writer
+}
 
-	forTags []string
-	args    []string
+func NewHelpCommand(
+	output io.Writer,
+) *HelpCommand {
+	return &HelpCommand{
+		output: output,
+	}
 }
 
 func (c HelpCommand) Execute() error {
-	fmt.Println("EW - (run things) e(very)w(here)")
-	fmt.Println("Original author: Björn Gerdau")
-	fmt.Println()
-	fmt.Println("Available commands:")
+	fmt.Fprintln(c.output, "EW - (run things) e(very)w(here)")
+	fmt.Fprintln(c.output, "Original author: Björn Gerdau")
+	fmt.Fprintln(c.output)
+	fmt.Fprintln(c.output, "Available commands:")
 
 	nyi := color.RedString(" (NOT YET IMPLEMENTED)")
 	cmds := [][]string{
@@ -53,7 +57,7 @@ func (c HelpCommand) Execute() error {
 
 	for _, cmd := range cmds {
 		filler := strings.Repeat(" ", longestHelp-len(cmd[0]))
-		fmt.Fprintln(color.Output, "  "+cmd[0]+filler+cmd[1])
+		fmt.Fprintln(c.output, "  "+cmd[0]+filler+cmd[1])
 	}
 
 	return nil

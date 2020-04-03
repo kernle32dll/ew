@@ -7,14 +7,28 @@ import (
 
 	"bytes"
 	"fmt"
+	"io"
 	"os/exec"
 	"strings"
 )
 
 type StatusCommand struct {
+	output io.Writer
 	config internal.Config
 
 	forTags []string
+}
+
+func NewStatusCommand(
+	output io.Writer,
+	config internal.Config,
+	forTags []string,
+) *StatusCommand {
+	return &StatusCommand{
+		output:  output,
+		config:  config,
+		forTags: forTags,
+	}
 }
 
 func (c StatusCommand) Execute() error {
@@ -26,9 +40,9 @@ func (c StatusCommand) Execute() error {
 	}
 
 	if len(paths) == 0 {
-		fmt.Println()
-		fmt.Fprintln(color.Output, determinateNoPathsErrorMessage(c.forTags))
-		fmt.Println()
+		fmt.Fprintln(c.output)
+		fmt.Fprintln(c.output, determinateNoPathsErrorMessage(c.forTags))
+		fmt.Fprintln(c.output)
 		return nil
 	}
 
@@ -49,7 +63,7 @@ func (c StatusCommand) Execute() error {
 		cmd.Stderr = buf
 
 		if err := cmd.Run(); err != nil {
-			color.Red(err.Error())
+			fmt.Fprintln(c.output, color.RedString(err.Error()))
 		}
 
 		lines := strings.Split(
@@ -82,7 +96,7 @@ func (c StatusCommand) Execute() error {
 	}
 
 	for _, row := range resultRows {
-		fmt.Fprintln(color.Output, row)
+		fmt.Fprintln(c.output, row)
 	}
 
 	return nil

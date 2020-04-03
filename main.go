@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/fatih/color"
 	"github.com/kernle32dll/ew/internal"
 	"github.com/kernle32dll/ew/internal/cmd"
 
@@ -17,7 +18,7 @@ func main() {
 
 	conf := internal.ParseConfigFromFolder(home)
 
-	exec, err := cmd.ParseCommand(conf, os.Args[1:])
+	exec, err := cmd.ParseCommand(color.Output, conf, os.Args[1:])
 	if err != nil {
 		fmt.Printf("Error while parsing cmd: %s", err)
 		os.Exit(1)
