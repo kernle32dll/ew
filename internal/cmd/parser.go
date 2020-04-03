@@ -47,6 +47,10 @@ func ParseCommand(output io.Writer, conf internal.Config, args []string) (Comman
 		}
 	}
 
+	return parseTagSpecificCommands(output, conf, args)
+}
+
+func parseTagSpecificCommands(output io.Writer, conf internal.Config, args []string) (Command, error) {
 	tags, rest := parseTags(conf, args)
 
 	if len(rest) == 0 || (len(rest) == 1 && rest[0] == "list") {
