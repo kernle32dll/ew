@@ -25,8 +25,8 @@ type encodable interface {
 // Config contains all runtime configuration for ew, such as
 // available tags.
 type Config struct {
-	Source ReadSource
-	Tags   Tags `json:"tags" yaml:"tags"`
+	Source ReadSource `json:"-" yaml:"-"`
+	Tags   Tags       `json:"tags" yaml:"tags"`
 }
 
 // Tags is a convenience wrapper around map[string][]string
