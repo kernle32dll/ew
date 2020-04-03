@@ -58,10 +58,6 @@ func parseTagSpecificCommands(output io.Writer, conf internal.Config, args []str
 	}
 
 	if (len(rest) == 1 || len(rest) == 2) && rest[0] == "status" {
-		if len(rest) == 2 && rest[1] == "-v" {
-			return NewAnyCommand(output, conf, tags, []string{"git", "status", "-sb"}), nil
-		}
-
 		return NewStatusCommand(output, conf, tags), nil
 	}
 
