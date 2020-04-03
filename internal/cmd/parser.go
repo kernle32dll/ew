@@ -17,22 +17,17 @@ func ParseCommand(output io.Writer, conf internal.Config, args []string) (Comman
 		return NewListPathsGroupedCommand(output, conf, conf.GetTagsSorted()), nil
 	}
 
-	if args[0] == "help" {
+	// Tag independent commands
+	switch args[0] {
+	case "help", "--help":
 		return NewHelpCommand(output), nil
-	}
-
-	if args[0] == "migrate" {
+	case "migrate":
 		return NewMigrateCommand(output, len(args) == 2 && args[1] == "--yaml"), nil
-	}
-
-	// List all paths
-	if args[0] == "paths" {
+	case "paths":
 		if len(args) == 1 || args[1] == "list" {
 			return NewListPathsCommand(output, conf, nil), nil
 		}
-	}
-
-	if args[0] == "tags" {
+	case "tags":
 		if len(args) == 1 || args[1] == "list" {
 			return NewListTagsCommand(output, conf), nil
 		}
