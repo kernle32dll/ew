@@ -79,7 +79,13 @@ func (c StatusCommand) Execute() error {
 			lines[i] = strings.TrimSpace(line)
 		}
 
-		branchInfo := strings.Split(strings.TrimSpace(strings.TrimPrefix(lines[0], "##")), "...")[0]
+		branchLine := strings.Split(strings.TrimSpace(strings.TrimPrefix(lines[0], "##")), "...")
+		branchInfo := branchLine[0]
+
+		additionalBranchInfo := strings.SplitN(branchLine[1], " ", 2)
+		if len(additionalBranchInfo) > 1 {
+			branchInfo += " " + additionalBranchInfo[1]
+		}
 
 		resultMatrix[i][1] = branchInfo
 
