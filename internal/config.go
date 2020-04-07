@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -34,6 +35,10 @@ type Tags map[string][]string
 
 // GetTagsSorted returns a sorted list of configured tags.
 func (c Config) GetTagsSorted() []string {
+	if len(c.Tags) == 0 {
+		return []string{}
+	}
+
 	tags := make([]string, len(c.Tags))
 	i := 0
 	for tag := range c.Tags {
@@ -48,7 +53,16 @@ func (c Config) GetTagsSorted() []string {
 
 // GetPathsOfTagSorted returns a sorted list of paths of the given tag.
 func (c Config) GetPathsOfTagSorted(tag string) []string {
-	paths := make([]string, len(c.Tags[tag]))
+	tagPaths, exists := c.Tags[tag]
+	if !exists {
+		return []string{}
+	}
+
+	if len(tagPaths) == 0 {
+		return []string{}
+	}
+
+	paths := make([]string, len(tagPaths))
 	copy(paths, c.Tags[tag])
 
 	sort.Strings(paths)
@@ -62,15 +76,26 @@ func (c Config) GetPathsOfTagSorted(tag string) []string {
 func (c Config) GetPathsOfTagsSorted(tags ...string) []string {
 	// Fast-path
 	if len(tags) == 0 {
+		return []string{}
+	} else if len(tags) == 1 {
 		return c.GetPathsOfTagSorted(tags[0])
 	}
 
 	pathSet := make(map[string]struct{})
 
 	for _, tag := range tags {
-		for _, folder := range c.Tags[tag] {
-			pathSet[folder] = struct{}{}
+		pathTags, exists := c.Tags[tag]
+
+		if exists {
+			for _, folder := range pathTags {
+				pathSet[folder] = struct{}{}
+			}
 		}
+	}
+
+	// Another fast path
+	if len(pathSet) == 0 {
+		return []string{}
 	}
 
 	paths := make([]string, len(pathSet))
@@ -94,6 +119,10 @@ func (c Config) GetTagsOfPathSorted(path string) []string {
 		if contains(paths, path) {
 			tags = append(tags, tag)
 		}
+	}
+
+	if len(tags) == 0 {
+		return []string{}
 	}
 
 	sort.Strings(tags)
@@ -172,8 +201,6 @@ func parseConfigFromJson(path string) (Config, error) {
 // Naming of the file is derived from the read source of
 // the config.
 func (c *Config) WriteConfig(path string) (string, error) {
-	cleanPath := strings.TrimRight(path, "/") + "/"
-
 	// default to yml
 	filename := ".ewconfig.yml"
 
@@ -184,7 +211,7 @@ func (c *Config) WriteConfig(path string) (string, error) {
 		filename = ".ewconfig.yml"
 	}
 
-	f, err := os.Create(cleanPath + filename)
+	f, err := os.Create(filepath.Join(path, filename))
 	if err != nil {
 		return "", err
 	}
