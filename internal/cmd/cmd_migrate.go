@@ -54,7 +54,7 @@ func (c MigrateCommand) Execute() error {
 		return err
 	}
 
-	fmt.Printf("Successfully migrated %q to %q\n", home+"/.grconfig.json", migratedPath)
+	fmt.Printf("Successfully migrated %q to %q\n", grPath, migratedPath)
 
 	return nil
 }
