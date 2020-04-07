@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 // MigrateCommand reads an existing gr config, and persists an
@@ -33,7 +34,7 @@ func (c MigrateCommand) Execute() error {
 		return err
 	}
 
-	conf, err := gr.ParseConfigFromGr(home + "/.grconfig.json")
+	conf, err := gr.ParseConfigFromGr(filepath.Join(home, ".grconfig.json"))
 	if err != nil {
 		return err
 	}

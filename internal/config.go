@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -143,14 +142,12 @@ func contains(s []string, e string) bool {
 // a valid ew config, or returns the default (empty)
 // config if none can be found.
 func ParseConfigFromFolder(path string) Config {
-	cleanPath := strings.TrimRight(path, "/") + "/"
-
-	yamlConf, err := parseConfigFromYaml(cleanPath)
+	yamlConf, err := parseConfigFromYaml(path)
 	if err == nil {
 		return yamlConf
 	}
 
-	jsonConf, err := parseConfigFromJson(cleanPath)
+	jsonConf, err := parseConfigFromJson(path)
 	if err == nil {
 		return jsonConf
 	}
@@ -160,7 +157,7 @@ func ParseConfigFromFolder(path string) Config {
 }
 
 func parseConfigFromYaml(path string) (Config, error) {
-	f, err := os.Open(path + ".ewconfig.yml")
+	f, err := os.Open(filepath.Join(path, ".ewconfig.yml"))
 	if err != nil {
 		return Config{}, err
 	}
@@ -179,7 +176,7 @@ func parseConfigFromYaml(path string) (Config, error) {
 }
 
 func parseConfigFromJson(path string) (Config, error) {
-	f, err := os.Open(path + ".ewconfig.json")
+	f, err := os.Open(filepath.Join(path, ".ewconfig.json"))
 	if err != nil {
 		return Config{}, err
 	}
