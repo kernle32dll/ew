@@ -8,9 +8,7 @@ import (
 )
 
 func colorPath(path string) string {
-	i := strings.LastIndex(path, string(filepath.Separator))
-	prefix, suffix := path[:i+1], path[i+1:]
-
+	prefix, suffix := filepath.Split(path)
 	return color.HiBlackString(prefix) + suffix
 }
 
