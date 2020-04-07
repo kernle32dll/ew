@@ -34,8 +34,14 @@ func (c MigrateCommand) Execute() error {
 		return err
 	}
 
-	conf, err := gr.ParseConfigFromGr(filepath.Join(home, ".grconfig.json"))
+	grPath := filepath.Join(home, ".grconfig.json")
+
+	conf, err := gr.ParseConfigFromGr(grPath)
 	if err != nil {
+		if _, isPathErr := err.(*os.PathError); isPathErr {
+			return fmt.Errorf("cannot open %q for migration - does not exist or is not accessible", grPath)
+		}
+
 		return err
 	}
 
