@@ -83,9 +83,13 @@ func (c StatusCommand) Execute() error {
 		branchLine := strings.Split(strings.TrimSpace(strings.TrimPrefix(lines[0], "##")), "...")
 		branchInfo := branchLine[0]
 
-		additionalBranchInfo := strings.SplitN(branchLine[1], " ", 2)
-		if len(additionalBranchInfo) > 1 {
-			branchInfo += " " + additionalBranchInfo[1]
+		if len(branchLine) > 1 {
+			additionalBranchInfo := strings.SplitN(branchLine[1], " ", 2)
+			if len(additionalBranchInfo) > 1 {
+				branchInfo += " " + additionalBranchInfo[1]
+			}
+		} else {
+			branchInfo += " " + color.RedString("(remote missing)")
 		}
 
 		resultMatrix[i][1] = branchInfo
