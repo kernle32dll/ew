@@ -32,7 +32,7 @@ func (c HelpCommand) Execute() error {
 	cmds := [][]string{
 		{"ew", "list all paths, grouped by their tags"},
 		{"ew help", "displays this help"},
-		{"ew --help", "displays this help (alias for ew help)"},
+		{"ew --help", ""},
 		{"ew migrate", "migrate from mixu/gr config, and keep json format"},
 		{"ew migrate --yaml", "migrate from mixu/gr config, and use new yaml format"},
 		{"ew paths", "list all paths (alias for ew paths list)"},
@@ -46,6 +46,8 @@ func (c HelpCommand) Execute() error {
 		{"ew status", "show quick git status for all paths"},
 		{"ew @tag1 status", "show quick git status for all paths of tag1 (supports multiple tags)"},
 		{"ew @tag1 some-cmd", "executes some-cmd in all paths of tag1 (supports multiple tags)"},
+		{"ew --parallel @tag1 some-cmd", "parallel executes some-cmd in all paths of tag1 (supports multiple tags)"},
+		{"ew -p @tag1 some-cmd", "(note: You will probably loose colored output!)"},
 	}
 
 	longestHelp := 0

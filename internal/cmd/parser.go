@@ -51,6 +51,12 @@ func ParseCommand(output io.Writer, conf internal.Config, args []string) (Comman
 }
 
 func parseTagSpecificCommands(output io.Writer, conf internal.Config, args []string) (Command, error) {
+	parallelFlag := false
+	if args[0] == "-p" || args[0] == "--parallel" {
+		parallelFlag = true
+		args = args[1:]
+	}
+
 	tags, rest := parseTags(conf, args)
 
 	if len(rest) == 0 || (len(rest) == 1 && rest[0] == "list") {
@@ -61,7 +67,7 @@ func parseTagSpecificCommands(output io.Writer, conf internal.Config, args []str
 		return NewStatusCommand(output, conf, tags), nil
 	}
 
-	return NewAnyCommand(output, conf, tags, rest), nil
+	return NewAnyCommand(output, conf, tags, rest, parallelFlag), nil
 }
 
 func parseTags(config internal.Config, args []string) ([]string, []string) {
