@@ -7,6 +7,7 @@ import (
 
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
@@ -20,12 +21,17 @@ func main() {
 
 	exec, err := cmd.ParseCommand(color.Output, conf, os.Args[1:])
 	if err != nil {
-		fmt.Printf("Error while parsing cmd: %s", err)
+		fmt.Printf("Error while parsing cmd: %s\n", err)
 		os.Exit(1)
 	}
 
+	start := time.Now()
+	defer func() {
+		fmt.Printf("\nExecuted in %s\n", time.Now().Sub(start))
+	}()
+
 	if err := exec.Execute(); err != nil {
-		fmt.Printf("Error while executing cmd: %s", err)
+		fmt.Printf("Error while executing cmd: %s\n", err)
 		os.Exit(1)
 	}
 }
