@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/kernle32dll/ew/internal"
 
+	"github.com/acarl005/stripansi"
 	"github.com/fatih/color"
 
 	"bytes"
@@ -123,7 +124,8 @@ func padMatrix(matrix [][]string) ([]string, error) {
 		}
 
 		for j := range matrix[i] {
-			if le := len(row[j]); le > lengths[j] {
+			le := characterLength(row[j])
+			if le > lengths[j] {
 				lengths[j] = le
 			}
 		}
@@ -136,7 +138,7 @@ func padMatrix(matrix [][]string) ([]string, error) {
 		for j, col := range row {
 			buf.WriteString(col)
 
-			filler := strings.Repeat(" ", lengths[j]-len(col)+5)
+			filler := strings.Repeat(" ", lengths[j]-characterLength(col)+5)
 			buf.WriteString(filler)
 		}
 
@@ -144,4 +146,8 @@ func padMatrix(matrix [][]string) ([]string, error) {
 	}
 
 	return newMatrix, nil
+}
+
+func characterLength(val string) int {
+	return len(stripansi.Strip(val))
 }
