@@ -1,16 +1,13 @@
 package cmd
 
 import (
+	"github.com/fatih/color"
 	"github.com/kernle32dll/ew/internal"
 
-	"github.com/fatih/color"
-
-	"bytes"
 	"fmt"
 	"io"
 	"os/exec"
 	"runtime"
-	"sync"
 )
 
 // AnyCommand is the "do-it-all" command, which allows to
@@ -83,11 +80,13 @@ func (c AnyCommand) Execute() error {
 
 func (c AnyCommand) executeParallel(paths []string) {
 	parallelFactor := runtime.NumCPU()
-	fmt.Fprintf(c.output, "Executing in parallel by %d, please wait...\n\n", parallelFactor)
+	in := make(chan int, len(paths))
+	out := make([]chan io.ReadCloser, len(paths))
+	for i := range paths {
+		out[i] = make(chan io.ReadCloser, 1)
+		in <- i
+	}
 
-	wg := &sync.WaitGroup{}
-	in := make(chan int, parallelFactor)
-	out := make([]*bytes.Buffer, len(paths))
 	for i := 0; i < parallelFactor; i++ {
 		go func() {
 			for {
@@ -97,38 +96,32 @@ func (c AnyCommand) executeParallel(paths []string) {
 						return
 					}
 
-					buf := &bytes.Buffer{}
+					reader, writer := io.Pipe()
+					out[job] <- reader
 
 					cmd := exec.Command(c.args[0], c.args[1:]...)
 					cmd.Dir = paths[job]
 
-					cmd.Stdout = buf
-					cmd.Stderr = buf
+					cmd.Stdout = writer
+					cmd.Stderr = writer
 
 					if err := cmd.Run(); err != nil {
-						fmt.Fprintln(buf, color.RedString(err.Error()))
+						fmt.Fprintln(writer, color.RedString(err.Error()))
 					}
 
-					out[job] = buf
-					wg.Done()
+					if err := writer.Close(); err != nil {
+						panic(err)
+					}
 				}
 			}
 		}()
 	}
-
-	wg.Add(len(paths))
-	for i := range paths {
-		in <- i
-	}
-
-	wg.Wait()
-	close(in)
 
 	for i, path := range paths {
 		fmt.Fprintln(c.output)
 		fmt.Fprintln(c.output, colorPath("in "+path)+":")
 		fmt.Fprintln(c.output)
 
-		out[i].WriteTo(c.output)
+		io.Copy(c.output, <-out[i])
 	}
 }
