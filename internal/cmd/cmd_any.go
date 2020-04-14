@@ -80,12 +80,16 @@ func (c AnyCommand) Execute() error {
 
 func (c AnyCommand) executeParallel(paths []string) {
 	parallelFactor := runtime.NumCPU()
-	in := make(chan int, len(paths))
-	out := make([]chan io.ReadCloser, len(paths))
+	in := make(chan int, parallelFactor)
+	out := make([]chan *io.PipeReader, len(paths))
 	for i := range paths {
-		out[i] = make(chan io.ReadCloser, 1)
-		in <- i
+		out[i] = make(chan *io.PipeReader, 1)
 	}
+	go func() {
+		for i := range paths {
+			in <- i
+		}
+	}()
 
 	for i := 0; i < parallelFactor; i++ {
 		go func() {
