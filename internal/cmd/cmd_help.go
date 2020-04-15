@@ -25,6 +25,10 @@ func NewHelpCommand(
 func (c HelpCommand) Execute() error {
 	fmt.Fprintln(c.output, "EW - (run things) e(very)w(here)")
 	fmt.Fprintln(c.output, "Original author: Björn Gerdau")
+
+	fmt.Fprint(c.output, "Version: ")
+	NewVersionCommand(c.output).Execute()
+
 	fmt.Fprintln(c.output)
 	fmt.Fprintln(c.output, "Available commands:")
 
@@ -33,6 +37,8 @@ func (c HelpCommand) Execute() error {
 		{"ew", "list all paths, grouped by their tags"},
 		{"ew help", "displays this help"},
 		{"ew --help", ""},
+		{"ew version", "displays version and build time (if applicable)"},
+		{"ew --version", ""},
 		{"ew migrate", "migrate from mixu/gr config, and keep json format"},
 		{"ew migrate --yaml", "migrate from mixu/gr config, and use new yaml format"},
 		{"ew paths", "list all paths (alias for ew paths list)"},

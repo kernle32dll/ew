@@ -26,6 +26,8 @@ func ParseCommand(output io.Writer, conf internal.Config, args []string) (Comman
 	switch args[0] {
 	case "help", "--help":
 		return NewHelpCommand(output), nil
+	case "version", "--version":
+		return NewVersionCommand(output), nil
 	case "migrate":
 		return NewMigrateCommand(output, len(args) == 2 && args[1] == "--yaml"), nil
 	case "paths":

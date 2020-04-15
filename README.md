@@ -41,6 +41,8 @@ COMMAND                           | DESCRIPTION
 ew                                |   list all paths, grouped by their tags
 ew help                           |   displays this help
 ew --help                         |   displays this help (alias for ew help)
+ew version                        |   displays version and build time (if applicable)
+ew --version                      |   displays version and build time (if applicable) (alias for ew version)
 ew migrate                        |   migrate from mixu/gr config, and keep json format
 ew migrate --yaml                 |   migrate from mixu/gr config, and use new yaml format
 ew paths                          |   list all paths (alias for ew paths list)
