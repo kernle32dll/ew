@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+const padLength = 3
+
 // StatusCommand prints out an opinionated git short-summary
 // for all paths of the given tags. Paths are in sorted order,
 // but are sorted tag agnostic.
@@ -142,7 +144,7 @@ func padMatrix(matrix [][]string) ([]string, error) {
 		for j, col := range row {
 			buf.WriteString(col)
 
-			filler := strings.Repeat(" ", lengths[j]-characterLength(col)+5)
+			filler := strings.Repeat(" ", lengths[j]-characterLength(col)+padLength)
 			buf.WriteString(filler)
 		}
 
