@@ -25,7 +25,7 @@ address multiple folders.
 ```yaml
 tags:
   go:
-	- /home/bgerda/go/src/github.com/kernle32dll/ew
+    - /home/bgerda/go/src/github.com/kernle32dll/ew
 ```
 
 Now you can run arbitrary commands for this tag (and so in every configured folder):
