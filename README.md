@@ -11,6 +11,29 @@ and executing tasks in all folders via these tags.
 **Note**: Currently it is not possible to add or remove folders to tags via the cli.
 See paragraph "Config" below, to see how to do this manually.
 
+## Quickstart
+
+You need a working installation of the Go tooling for installation:
+
+```shell script
+go install github.com/kernle32dll/ew
+```
+
+Now add your first tag with folders to the `~/.ewconfig.yml`. Tags are used to
+address multiple folders.
+
+```yaml
+tags:
+  go:
+    - /home/bgerda/go/src/github.com/kernle32dll/ew
+```
+
+Now you can run arbitrary commands for this tag (and so in every configured folder):
+
+```shell script
+ew @go cat go.mod
+```
+
 ## How to use
 
 COMMAND                           | DESCRIPTION
