@@ -8,9 +8,6 @@
 ew - short for `(run things) e(very)w(here)` is a tool for grouping folders by tags,
 and executing tasks in all folders via these tags.
 
-**Note**: Currently it is not possible to add or remove folders to tags via the cli.
-See paragraph "Config" below, to see how to do this manually.
-
 ## Quickstart
 
 You need a working installation of the Go tooling for installation:
