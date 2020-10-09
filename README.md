@@ -51,8 +51,8 @@ ew tags                           |   list all tags (alias for ew tags list)
 ew tags list                      |   list all tags
 ew tags add @some-tag             |   add current directory to tag "some-tag"
 ew tags add \some\path @some-tag  |   add \some\path to tag "some-tag"
-ew tags rm @some-tag              |   add current directory to tag "some-tag" (NOT YET IMPLEMENTED)
-ew tags rm \some\path @some-tag   |   add \some\path to tag "some-tag" (NOT YET IMPLEMENTED)
+ew tags rm @some-tag              |   add current directory to tag "some-tag"
+ew tags rm \some\path @some-tag   |   add \some\path to tag "some-tag"
 ew status                         |   show quick git status for all paths
 ew @tag1 status                   |   show quick git status for all paths of tag1 (supports multiple tags)
 ew @tag1 some-cmd                 |   executes some-cmd in all paths of tag1 (supports multiple tags)

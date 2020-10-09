@@ -43,6 +43,28 @@ func (c *Config) AddPathsToTag(tag string, paths ...string) {
 	c.Tags[tag] = deDuplicateAndSort(append(c.Tags[tag], paths...))
 }
 
+// RemovePathsFromTag removes a list of paths from a tag.
+func (c *Config) RemovePathsFromTag(tag string, paths ...string) {
+	if len(paths) == 0 {
+		return
+	}
+
+	// Prepare full array size, and splice later
+	newTags := make([]string, len(c.Tags[tag]))
+	i, rmCount := 0, 0
+	for _, path := range c.Tags[tag] {
+		if contains(paths, path) {
+			rmCount++
+			continue
+		}
+
+		newTags[i] = path
+		i++
+	}
+
+	c.Tags[tag] = newTags[:len(newTags)-rmCount]
+}
+
 func deDuplicateAndSort(keys []string) []string {
 	table := make(map[string]struct{}, len(keys))
 	for _, key := range keys {
