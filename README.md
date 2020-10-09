@@ -49,8 +49,8 @@ ew paths                          |   list all paths (alias for ew paths list)
 ew paths list                     |   list all paths
 ew tags                           |   list all tags (alias for ew tags list)
 ew tags list                      |   list all tags
-ew tags add @some-tag             |   add current directory to tag "some-tag" (NOT YET IMPLEMENTED)
-ew tags add \some\path @some-tag  |   add \some\path to tag "some-tag" (NOT YET IMPLEMENTED)
+ew tags add @some-tag             |   add current directory to tag "some-tag"
+ew tags add \some\path @some-tag  |   add \some\path to tag "some-tag"
 ew tags rm @some-tag              |   add current directory to tag "some-tag" (NOT YET IMPLEMENTED)
 ew tags rm \some\path @some-tag   |   add \some\path to tag "some-tag" (NOT YET IMPLEMENTED)
 ew status                         |   show quick git status for all paths

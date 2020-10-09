@@ -40,8 +40,7 @@ func ParseCommand(output io.Writer, conf internal.Config, args []string) (Comman
 		}
 
 		if args[1] == "add" {
-			//&ListPathsCommand{config: conf}.Execute()
-			return nil, errors.New("tag adding not implemented yet")
+			return NewAddPathsCommand(output, conf, args[2:]), nil
 		}
 		if args[1] == "rm" {
 			//&ListPathsCommand{config: conf}.Execute()

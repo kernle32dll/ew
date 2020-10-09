@@ -34,6 +34,33 @@ type Config struct {
 // Tags is a convenience wrapper around map[string][]string
 type Tags map[string][]string
 
+// AddPathsToTag adds a list of paths to a tag.
+func (c *Config) AddPathsToTag(tag string, paths ...string) {
+	if len(paths) == 0 {
+		return
+	}
+
+	c.Tags[tag] = deDuplicateAndSort(append(c.Tags[tag], paths...))
+}
+
+func deDuplicateAndSort(keys []string) []string {
+	table := make(map[string]struct{}, len(keys))
+	for _, key := range keys {
+		table[key] = struct{}{}
+	}
+
+	deduped := make([]string, len(table))
+	i := 0
+	for key := range table {
+		deduped[i] = key
+		i++
+	}
+
+	sort.Strings(deduped)
+
+	return deduped
+}
+
 // GetTagsSorted returns a sorted list of configured tags.
 func (c Config) GetTagsSorted() []string {
 	if len(c.Tags) == 0 {
