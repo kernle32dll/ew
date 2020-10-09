@@ -1,7 +1,7 @@
 language: go
 
 go:
-  - 1.14.x
+  - 1.15.x
   - master
 
 # Allow builds from tip to fail - they might be in an unstable state
@@ -40,4 +40,4 @@ deploy:
   on:
     repo: kernle32dll/ew
     tags: true
-    go: 1.14.x
+    go: 1.15.x
