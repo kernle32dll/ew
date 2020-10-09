@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"sort"
@@ -25,8 +26,9 @@ type encodable interface {
 // Config contains all runtime configuration for ew, such as
 // available tags.
 type Config struct {
-	Source ReadSource `json:"-" yaml:"-"`
-	Tags   Tags       `json:"tags" yaml:"tags"`
+	Source     ReadSource `json:"-" yaml:"-"`
+	LoadedFrom string     `json:"-" yaml:"-"`
+	Tags       Tags       `json:"tags" yaml:"tags"`
 }
 
 // Tags is a convenience wrapper around map[string][]string
@@ -153,7 +155,7 @@ func ParseConfigFromFolder(path string) Config {
 	}
 
 	// If no config is found, use default yaml
-	return Config{Source: YamlSrc}
+	return Config{Source: YamlSrc, LoadedFrom: path}
 }
 
 func parseConfigFromYaml(path string) (Config, error) {
@@ -166,7 +168,8 @@ func parseConfigFromYaml(path string) (Config, error) {
 	decoder := yaml.NewDecoder(f)
 
 	config := Config{
-		Source: YamlSrc,
+		Source:     YamlSrc,
+		LoadedFrom: path,
 	}
 	if err := decoder.Decode(&config); err != nil {
 		return Config{}, err
@@ -185,13 +188,24 @@ func parseConfigFromJson(path string) (Config, error) {
 	decoder := json.NewDecoder(f)
 
 	config := Config{
-		Source: JsonSrc,
+		Source:     JsonSrc,
+		LoadedFrom: path,
 	}
 	if err := decoder.Decode(&config); err != nil {
 		return Config{}, err
 	}
 
 	return config, nil
+}
+
+// ReWriteConfig re-writes the config from the path it was
+// loaded from.
+func (c *Config) ReWriteConfig() (string, error) {
+	if c.LoadedFrom == "" {
+		return "", errors.New("loaded path not set, cannot re-write")
+	}
+
+	return c.WriteConfig(c.LoadedFrom)
 }
 
 // WriteConfig writes the config to the given folder.
@@ -229,6 +243,8 @@ func (c *Config) WriteConfig(path string) (string, error) {
 	if err := encoder.Encode(c); err != nil {
 		return "", err
 	}
+
+	c.LoadedFrom = path
 
 	return f.Name(), nil
 }
