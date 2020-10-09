@@ -23,8 +23,10 @@ env:
     - GO111MODULE=on
 
 script:
-  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then CGO_ENABLED=0 go build -ldflags="-w -s" -o ew-$TRAVIS_OS_NAME-$TRAVIS_CPU_ARCH.exe . ; fi
-  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then CGO_ENABLED=0 go build -ldflags="-w -s" -o ew-$TRAVIS_OS_NAME-$TRAVIS_CPU_ARCH . ; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then CGO_ENABLED=0 go build -ldflags="-w -s -X 'github.com/kernle32dll/ew/internal/cmd.buildBranch=$TRAVIS_BRANCH'" -o ew-$TRAVIS_OS_NAME-$TRAVIS_CPU_ARCH.exe . ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then CGO_ENABLED=0 go build -ldflags="-w -s -X 'github.com/kernle32dll/ew/internal/cmd.buildDate=$(date -u '+%Y/%m/%d %H:%M:%S')' -X 'github.com/kernle32dll/ew/internal/cmd.buildBranch=$TRAVIS_BRANCH'" -o ew-$TRAVIS_OS_NAME-$TRAVIS_CPU_ARCH . ; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then ./ew-$TRAVIS_OS_NAME-$TRAVIS_CPU_ARCH.exe --version ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ]; then ./ew-$TRAVIS_OS_NAME-$TRAVIS_CPU_ARCH --version ; fi
   - go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 after_success:
