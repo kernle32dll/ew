@@ -5,6 +5,7 @@ import (
 
 	"encoding/json"
 	"os"
+	"path/filepath"
 )
 
 type config struct {
@@ -30,7 +31,8 @@ func ParseConfigFromGr(filename string) (internal.Config, error) {
 	}
 
 	return internal.Config{
-		Source: internal.JsonSrc,
-		Tags:   map[string][]string(config.Tags),
+		Source:     internal.JsonSrc,
+		LoadedFrom: filepath.Dir(filename),
+		Tags:       map[string][]string(config.Tags),
 	}, nil
 }

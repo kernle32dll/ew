@@ -49,7 +49,7 @@ func (c MigrateCommand) Execute() error {
 		conf.Source = internal.YamlSrc
 	}
 
-	migratedPath, err := conf.WriteConfig(home)
+	migratedPath, err := conf.ReWriteConfig()
 	if err != nil {
 		return err
 	}

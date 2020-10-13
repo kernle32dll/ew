@@ -6,6 +6,7 @@ import (
 
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -26,7 +27,8 @@ func TestParseConfigFromGr(t *testing.T) {
 		{name: "not existing", filename: "does-not-exist", want: internal.Config{}, wantErr: true},
 		{name: "broken file", filename: brokenFile.Name(), want: internal.Config{}, wantErr: true},
 		{name: "working file", filename: workingFile.Name(), want: internal.Config{
-			Source: internal.JsonSrc,
+			Source:     internal.JsonSrc,
+			LoadedFrom: filepath.Clean(os.TempDir()),
 			Tags: map[string][]string{
 				"tag1": {"path1a", "path1b"},
 				"tag2": {"path2a"},
