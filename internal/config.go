@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"sort"
@@ -25,12 +26,62 @@ type encodable interface {
 // Config contains all runtime configuration for ew, such as
 // available tags.
 type Config struct {
-	Source ReadSource `json:"-" yaml:"-"`
-	Tags   Tags       `json:"tags" yaml:"tags"`
+	Source     ReadSource `json:"-" yaml:"-"`
+	LoadedFrom string     `json:"-" yaml:"-"`
+	Tags       Tags       `json:"tags" yaml:"tags"`
 }
 
 // Tags is a convenience wrapper around map[string][]string
 type Tags map[string][]string
+
+// AddPathsToTag adds a list of paths to a tag.
+func (c *Config) AddPathsToTag(tag string, paths ...string) {
+	if len(paths) == 0 {
+		return
+	}
+
+	c.Tags[tag] = deDuplicateAndSort(append(c.Tags[tag], paths...))
+}
+
+// RemovePathsFromTag removes a list of paths from a tag.
+func (c *Config) RemovePathsFromTag(tag string, paths ...string) {
+	if len(paths) == 0 {
+		return
+	}
+
+	// Prepare full array size, and splice later
+	newTags := make([]string, len(c.Tags[tag]))
+	i, rmCount := 0, 0
+	for _, path := range c.Tags[tag] {
+		if contains(paths, path) {
+			rmCount++
+			continue
+		}
+
+		newTags[i] = path
+		i++
+	}
+
+	c.Tags[tag] = newTags[:len(newTags)-rmCount]
+}
+
+func deDuplicateAndSort(keys []string) []string {
+	table := make(map[string]struct{}, len(keys))
+	for _, key := range keys {
+		table[key] = struct{}{}
+	}
+
+	deduped := make([]string, len(table))
+	i := 0
+	for key := range table {
+		deduped[i] = key
+		i++
+	}
+
+	sort.Strings(deduped)
+
+	return deduped
+}
 
 // GetTagsSorted returns a sorted list of configured tags.
 func (c Config) GetTagsSorted() []string {
@@ -153,7 +204,7 @@ func ParseConfigFromFolder(path string) Config {
 	}
 
 	// If no config is found, use default yaml
-	return Config{Source: YamlSrc}
+	return Config{Source: YamlSrc, LoadedFrom: path}
 }
 
 func parseConfigFromYaml(path string) (Config, error) {
@@ -166,7 +217,8 @@ func parseConfigFromYaml(path string) (Config, error) {
 	decoder := yaml.NewDecoder(f)
 
 	config := Config{
-		Source: YamlSrc,
+		Source:     YamlSrc,
+		LoadedFrom: path,
 	}
 	if err := decoder.Decode(&config); err != nil {
 		return Config{}, err
@@ -185,13 +237,24 @@ func parseConfigFromJson(path string) (Config, error) {
 	decoder := json.NewDecoder(f)
 
 	config := Config{
-		Source: JsonSrc,
+		Source:     JsonSrc,
+		LoadedFrom: path,
 	}
 	if err := decoder.Decode(&config); err != nil {
 		return Config{}, err
 	}
 
 	return config, nil
+}
+
+// ReWriteConfig re-writes the config from the path it was
+// loaded from.
+func (c *Config) ReWriteConfig() (string, error) {
+	if c.LoadedFrom == "" {
+		return "", errors.New("loaded path not set, cannot re-write")
+	}
+
+	return c.WriteConfig(c.LoadedFrom)
 }
 
 // WriteConfig writes the config to the given folder.
@@ -229,6 +292,8 @@ func (c *Config) WriteConfig(path string) (string, error) {
 	if err := encoder.Encode(c); err != nil {
 		return "", err
 	}
+
+	c.LoadedFrom = path
 
 	return f.Name(), nil
 }

@@ -232,7 +232,7 @@ func writeTempFile(t *testing.T, filename string, fileString string) string {
 
 func TestParseConfigFromFolder(t *testing.T) {
 	t.Run("no config found", func(t *testing.T) {
-		want := Config{Source: YamlSrc, Tags: nil}
+		want := Config{Source: YamlSrc, LoadedFrom: "does-not-exist", Tags: nil}
 		if got := ParseConfigFromFolder("does-not-exist"); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
@@ -246,7 +246,7 @@ func TestParseConfigFromFolder(t *testing.T) {
 			clearFolder(t, folder)
 		}()
 
-		want := Config{Source: JsonSrc, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
+		want := Config{Source: JsonSrc, LoadedFrom: folder, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
 		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
@@ -258,7 +258,7 @@ func TestParseConfigFromFolder(t *testing.T) {
 			clearFolder(t, folder)
 		}()
 
-		want := Config{Source: YamlSrc, Tags: nil}
+		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: nil}
 		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
@@ -277,7 +277,7 @@ tags:
 			clearFolder(t, folder)
 		}()
 
-		want := Config{Source: YamlSrc, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
+		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
 		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
@@ -289,7 +289,7 @@ tags:
 			clearFolder(t, folder)
 		}()
 
-		want := Config{Source: YamlSrc, Tags: nil}
+		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: nil}
 		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
