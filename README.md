@@ -10,25 +10,19 @@ and executing tasks in all folders via these tags.
 
 ## Quickstart
 
-You need a working installation of the Go tooling for installation:
+Grab the latest [release](https://github.com/kernle32dll/ew/releases), and put it in a executable path.
+(For Linux e.g. `/usr/local/bin`). If you want to get hands on, install Go, and check out the latest
+`master` branch.
 
-```shell script
-go install github.com/kernle32dll/ew
-```
+Verify ew is working by executing `ew version`.
 
-Now add your first tag with folders to the `~/.ewconfig.yml`. Tags are used to
-address multiple folders.
-
-```yaml
-tags:
-  go:
-    - /home/bgerda/go/src/github.com/kernle32dll/ew
-```
+Now, you can either jump to any folder and get started tagging by calling `ew tags add @mytag`, or edit
+the ew config file by hand (see #Config below)
 
 Now you can run arbitrary commands for this tag (and so in every configured folder):
 
 ```shell script
-ew @go cat go.mod
+ew @mytag cat go.mod
 ```
 
 ## How to use
