@@ -280,12 +280,18 @@ func TestParseConfigFromFolder(t *testing.T) {
 			folder,
 		)
 
+		// Support for go 1.16 on master
+		wantOutputEither := fmt.Sprintf(
+			"Failed to read json config in %s: json: invalid character ']' looking for beginning of object key string\n",
+			folder,
+		)
+
 		output := &bytes.Buffer{}
 		if got := ParseConfigFromFolder(output, folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
 
-		if got := output.String(); got != wantOutput {
+		if got := output.String(); got != wantOutput && got != wantOutputEither {
 			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
 		}
 	})
