@@ -195,15 +195,23 @@ func contains(s []string, e string) bool {
 // ParseConfigFromFolder parses the given folder for
 // a valid ew config, or returns the default (empty)
 // config if none can be found.
-func ParseConfigFromFolder(path string) Config {
+func ParseConfigFromFolder(output io.Writer, path string) Config {
 	yamlConf, err := parseConfigFromYaml(path)
 	if err == nil {
 		return yamlConf
+	} else if errors.Is(err, io.EOF) {
+		fmt.Fprintln(output, color.YellowString("Skipping empty yaml config in %s", path))
+	} else if !errors.Is(err, os.ErrNotExist) {
+		fmt.Fprintln(output, color.RedString("Failed to read yaml config in %s: %s", path, err))
 	}
 
 	jsonConf, err := parseConfigFromJson(path)
 	if err == nil {
 		return jsonConf
+	} else if errors.Is(err, io.EOF) {
+		fmt.Fprintln(output, color.YellowString("Skipping empty json config in %s", path))
+	} else if !errors.Is(err, os.ErrNotExist) {
+		fmt.Fprintln(output, color.RedString("Failed to read json config in %s: %s", path, err))
 	}
 
 	// If no config is found, use default yaml

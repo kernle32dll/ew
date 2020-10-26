@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -233,8 +235,15 @@ func writeTempFile(t *testing.T, filename string, fileString string) string {
 func TestParseConfigFromFolder(t *testing.T) {
 	t.Run("no config found", func(t *testing.T) {
 		want := Config{Source: YamlSrc, LoadedFrom: "does-not-exist", Tags: map[string][]string{}}
-		if got := ParseConfigFromFolder("does-not-exist"); !reflect.DeepEqual(got, want) {
+		wantOutput := ""
+
+		output := &bytes.Buffer{}
+		if got := ParseConfigFromFolder(output, "does-not-exist"); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
+		}
+
+		if got := output.String(); got != wantOutput {
+			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
 		}
 	})
 
@@ -247,8 +256,15 @@ func TestParseConfigFromFolder(t *testing.T) {
 		}()
 
 		want := Config{Source: JsonSrc, LoadedFrom: folder, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
-		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
+		wantOutput := ""
+
+		output := &bytes.Buffer{}
+		if got := ParseConfigFromFolder(output, folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
+		}
+
+		if got := output.String(); got != wantOutput {
+			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
 		}
 	})
 
@@ -259,8 +275,40 @@ func TestParseConfigFromFolder(t *testing.T) {
 		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
-		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
+		wantOutput := fmt.Sprintf(
+			"Failed to read json config in %s: invalid character ']' looking for beginning of object key string\n",
+			folder,
+		)
+
+		output := &bytes.Buffer{}
+		if got := ParseConfigFromFolder(output, folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
+		}
+
+		if got := output.String(); got != wantOutput {
+			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
+		}
+	})
+
+	t.Run("json config found, but EOF", func(t *testing.T) {
+		folder := writeTempFile(t, ".ewconfig.json", ``)
+		defer func() {
+			clearFolder(t, folder)
+		}()
+
+		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
+		wantOutput := fmt.Sprintf(
+			"Skipping empty json config in %s\n",
+			folder,
+		)
+
+		output := &bytes.Buffer{}
+		if got := ParseConfigFromFolder(output, folder); !reflect.DeepEqual(got, want) {
+			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
+		}
+
+		if got := output.String(); got != wantOutput {
+			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
 		}
 	})
 
@@ -278,8 +326,15 @@ tags:
 		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
-		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
+		wantOutput := ""
+
+		output := &bytes.Buffer{}
+		if got := ParseConfigFromFolder(output, folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
+		}
+
+		if got := output.String(); got != wantOutput {
+			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
 		}
 	})
 
@@ -290,8 +345,40 @@ tags:
 		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
-		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
+		wantOutput := fmt.Sprintf(
+			"Failed to read yaml config in %s: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `t{]` into internal.Config\n",
+			folder,
+		)
+
+		output := &bytes.Buffer{}
+		if got := ParseConfigFromFolder(output, folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
+		}
+
+		if got := output.String(); got != wantOutput {
+			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
+		}
+	})
+
+	t.Run("yaml config found, but EOF", func(t *testing.T) {
+		folder := writeTempFile(t, ".ewconfig.yml", ``)
+		defer func() {
+			clearFolder(t, folder)
+		}()
+
+		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
+		wantOutput := fmt.Sprintf(
+			"Skipping empty yaml config in %s\n",
+			folder,
+		)
+
+		output := &bytes.Buffer{}
+		if got := ParseConfigFromFolder(output, folder); !reflect.DeepEqual(got, want) {
+			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
+		}
+
+		if got := output.String(); got != wantOutput {
+			t.Errorf("ParseConfigFromFolder() output = %v, want %v", got, wantOutput)
 		}
 	})
 }

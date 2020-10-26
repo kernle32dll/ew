@@ -17,7 +17,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	conf := internal.ParseConfigFromFolder(home)
+	conf := internal.ParseConfigFromFolder(color.Output, home)
 
 	exec, err := cmd.ParseCommand(color.Output, conf, os.Args[1:])
 	if err != nil {
