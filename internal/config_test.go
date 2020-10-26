@@ -232,7 +232,7 @@ func writeTempFile(t *testing.T, filename string, fileString string) string {
 
 func TestParseConfigFromFolder(t *testing.T) {
 	t.Run("no config found", func(t *testing.T) {
-		want := Config{Source: YamlSrc, LoadedFrom: "does-not-exist", Tags: nil}
+		want := Config{Source: YamlSrc, LoadedFrom: "does-not-exist", Tags: map[string][]string{}}
 		if got := ParseConfigFromFolder("does-not-exist"); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
@@ -258,7 +258,7 @@ func TestParseConfigFromFolder(t *testing.T) {
 			clearFolder(t, folder)
 		}()
 
-		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: nil}
+		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
 		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}
@@ -289,7 +289,7 @@ tags:
 			clearFolder(t, folder)
 		}()
 
-		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: nil}
+		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
 		if got := ParseConfigFromFolder(folder); !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseConfigFromFolder() = %v, want %v", got, want)
 		}

@@ -3,6 +3,9 @@ package internal
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/fatih/color"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -204,7 +207,11 @@ func ParseConfigFromFolder(path string) Config {
 	}
 
 	// If no config is found, use default yaml
-	return Config{Source: YamlSrc, LoadedFrom: path}
+	return Config{
+		Source:     YamlSrc,
+		LoadedFrom: path,
+		Tags:       make(map[string][]string),
+	}
 }
 
 func parseConfigFromYaml(path string) (Config, error) {
@@ -219,6 +226,7 @@ func parseConfigFromYaml(path string) (Config, error) {
 	config := Config{
 		Source:     YamlSrc,
 		LoadedFrom: path,
+		Tags:       make(map[string][]string),
 	}
 	if err := decoder.Decode(&config); err != nil {
 		return Config{}, err
@@ -239,6 +247,7 @@ func parseConfigFromJson(path string) (Config, error) {
 	config := Config{
 		Source:     JsonSrc,
 		LoadedFrom: path,
+		Tags:       make(map[string][]string),
 	}
 	if err := decoder.Decode(&config); err != nil {
 		return Config{}, err
