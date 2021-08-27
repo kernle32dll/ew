@@ -8,11 +8,21 @@
 ew - short for `(run things) e(very)w(here)` is a tool for grouping folders by tags,
 and executing tasks in all folders via these tags.
 
-## Quickstart
+## Getting ew
 
 Grab the latest [release](https://github.com/kernle32dll/ew/releases), and put it in a executable path.
-(For Linux e.g. `/usr/local/bin`). If you want to get hands on, install Go, and check out the latest
-`master` branch.
+If you want to get hands on, install Go, and check out the latest `master` branch.
+
+**Linux**
+
+The following script downloads the latest release to /usr/local/bin/`, and makes it executable.
+
+```shell script
+sudo wget -c https://github.com/kernle32dll/ew/releases/download/v1.0.1/ew-linux-amd64 -O /usr/local/bin/ew
+sudo chmod +x /usr/local/bin/ew
+```
+
+## Quickstart
 
 Verify ew is working by executing `ew version`.
 
