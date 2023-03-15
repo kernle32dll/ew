@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/kernle32dll/ew.svg?branch=master)](https://travis-ci.com/kernle32dll/ew)
+[![test](https://github.com/kernle32dll/ew/actions/workflows/test.yml/badge.svg)](https://github.com/kernle32dll/ew/actions/workflows/test.yml)
 [![GoDoc](https://godoc.org/github.com/kernle32dll/ew?status.svg)](http://godoc.org/github.com/kernle32dll/ew)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kernle32dll/ew)](https://goreportcard.com/report/github.com/kernle32dll/ew)
 [![codecov](https://codecov.io/gh/kernle32dll/ew/branch/master/graph/badge.svg)](https://codecov.io/gh/kernle32dll/ew)
