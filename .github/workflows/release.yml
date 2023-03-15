@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  release:
+    name: Create Semantic Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Semantic versioning
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: patch
+          dry_run: ${{ (github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master') && 'true' || 'false' }}
+          custom_release_rules: 'chore:patch:Chore'
+
+      - name: Print changelog to job summary
+        run: |
+          echo '## Changelog' >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.tag_version.outputs.changelog }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.tag_version.outputs.new_tag }}
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+          token: ${{ secrets.GITHUB_TOKEN }}

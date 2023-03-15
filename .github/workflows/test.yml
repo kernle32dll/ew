@@ -1,0 +1,70 @@
+name: test
+
+on: [ push ]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        go: [
+          '1.25',
+        ]
+        os: [
+          ubuntu-latest,
+          ubuntu-22.04-arm,
+          macos-latest, # implicitly ARM
+          windows-latest,
+        ]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      OS: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Go ${{ matrix.go }}
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+
+      - name: Install test tooling
+        shell: bash
+        run: |
+          go install gotest.tools/gotestsum@v1.13.0
+
+      - name: Test
+        shell: bash
+        run: gotestsum --format github-actions --junitfile junit.xml -- -v -coverpkg=./... -coverprofile=coverage.txt -covermode atomic -race ./...
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: runner.os == 'Linux' && runner.arch == 'X64'
+        with:
+          files: junit.xml
+          check_run: false # Disable check run due to https://github.com/EnricoMi/publish-unit-test-result-action/issues/12
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: runner.os == 'macOS'
+        with:
+          files: junit.xml
+          check_run: false # Disable check run due to https://github.com/EnricoMi/publish-unit-test-result-action/issues/12
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2
+        if: runner.os == 'Windows'
+        with:
+          files: junit.xml
+          check_run: false # Disable check run due to https://github.com/EnricoMi/publish-unit-test-result-action/issues/12
+
+      - name: Upload code coverage to Codecov
+        uses: codecov/codecov-action@v5
+        if: matrix.go == '1.25'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          env_vars: OS
+
