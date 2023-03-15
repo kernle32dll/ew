@@ -12,8 +12,8 @@ import (
 
 func TestParseConfigFromGr(t *testing.T) {
 	// Prepare test files
-	brokenFile := testFileWithContent(t, "[}")
-	workingFile := testFileWithContent(t, `{"tags": {"tag1": ["path1a", "path1b"], "tag2": ["path2a"], "tag3": []}}`)
+	brokenFileName := testFileWithContent(t, "[}")
+	workingFileName := testFileWithContent(t, `{"tags": {"tag1": ["path1a", "path1b"], "tag2": ["path2a"], "tag3": []}}`)
 
 	tests := []struct {
 		name     string
@@ -22,10 +22,10 @@ func TestParseConfigFromGr(t *testing.T) {
 		wantErr  bool
 	}{
 		{name: "not existing", filename: "does-not-exist", want: internal.Config{}, wantErr: true},
-		{name: "broken file", filename: brokenFile.Name(), want: internal.Config{}, wantErr: true},
-		{name: "working file", filename: workingFile.Name(), want: internal.Config{
+		{name: "broken file", filename: brokenFileName, want: internal.Config{}, wantErr: true},
+		{name: "working file", filename: workingFileName, want: internal.Config{
 			Source:     internal.JsonSrc,
-			LoadedFrom: filepath.Dir(workingFile.Name()),
+			LoadedFrom: filepath.Dir(workingFileName),
 			Tags: map[string][]string{
 				"tag1": {"path1a", "path1b"},
 				"tag2": {"path2a"},
@@ -47,7 +47,7 @@ func TestParseConfigFromGr(t *testing.T) {
 	}
 }
 
-func testFileWithContent(t *testing.T, content string) *os.File {
+func testFileWithContent(t *testing.T, content string) string {
 	folder := t.TempDir()
 
 	f, err := os.CreateTemp(folder, "")
@@ -59,5 +59,9 @@ func testFileWithContent(t *testing.T, content string) *os.File {
 		t.Fatal(err.Error())
 	}
 
-	return f
+	if err := f.Close(); err != nil {
+		t.Fatal(err.Error())
+	}
+
+	return f.Name()
 }
