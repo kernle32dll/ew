@@ -146,12 +146,12 @@ func TestConfig_WriteConfig(t *testing.T) {
 `
 
 	wantYml := `tags:
-  another-tag:
-  - path4
-  - path3
-  some-tag:
-  - path1
-  - path2
+    another-tag:
+        - path4
+        - path3
+    some-tag:
+        - path1
+        - path2
 `
 
 	tests := []struct {

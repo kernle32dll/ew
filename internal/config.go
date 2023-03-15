@@ -1,20 +1,20 @@
 package internal
 
 import (
+	"github.com/fatih/color"
+	"gopkg.in/yaml.v3"
+
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
 	"io"
 	"os"
 	"path/filepath"
 	"sort"
-
-	"gopkg.in/yaml.v2"
 )
 
 // ReadSource determinate from which source a given config was read,
-//and/or in which format it should be persisted.
+// and/or in which format it should be persisted.
 type ReadSource int
 
 const (
