@@ -93,29 +93,22 @@ func (c AnyCommand) executeParallel(paths []string) {
 
 	for i := 0; i < parallelFactor; i++ {
 		go func() {
-			for {
-				select {
-				case job, more := <-in:
-					if !more {
-						return
-					}
+			for job := range in {
+				reader, writer := io.Pipe()
+				out[job] <- reader
 
-					reader, writer := io.Pipe()
-					out[job] <- reader
+				cmd := exec.Command(c.args[0], c.args[1:]...)
+				cmd.Dir = paths[job]
 
-					cmd := exec.Command(c.args[0], c.args[1:]...)
-					cmd.Dir = paths[job]
+				cmd.Stdout = writer
+				cmd.Stderr = writer
 
-					cmd.Stdout = writer
-					cmd.Stderr = writer
+				if err := cmd.Run(); err != nil {
+					fmt.Fprintln(writer, color.RedString(err.Error()))
+				}
 
-					if err := cmd.Run(); err != nil {
-						fmt.Fprintln(writer, color.RedString(err.Error()))
-					}
-
-					if err := writer.Close(); err != nil {
-						panic(err)
-					}
+				if err := writer.Close(); err != nil {
+					panic(err)
 				}
 			}
 		}()
