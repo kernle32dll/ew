@@ -4,7 +4,6 @@ import (
 	"github.com/kernle32dll/ew/internal"
 	"github.com/kernle32dll/ew/internal/gr"
 
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -14,9 +13,7 @@ import (
 func TestParseConfigFromGr(t *testing.T) {
 	// Prepare test files
 	brokenFile := testFileWithContent(t, "[}")
-	defer os.Remove(brokenFile.Name())
 	workingFile := testFileWithContent(t, `{"tags": {"tag1": ["path1a", "path1b"], "tag2": ["path2a"], "tag3": []}}`)
-	defer os.Remove(workingFile.Name())
 
 	tests := []struct {
 		name     string
@@ -28,7 +25,7 @@ func TestParseConfigFromGr(t *testing.T) {
 		{name: "broken file", filename: brokenFile.Name(), want: internal.Config{}, wantErr: true},
 		{name: "working file", filename: workingFile.Name(), want: internal.Config{
 			Source:     internal.JsonSrc,
-			LoadedFrom: filepath.Clean(os.TempDir()),
+			LoadedFrom: filepath.Dir(workingFile.Name()),
 			Tags: map[string][]string{
 				"tag1": {"path1a", "path1b"},
 				"tag2": {"path2a"},
@@ -44,14 +41,16 @@ func TestParseConfigFromGr(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ParseConfigFromGr() got = %v, want %v", got, tt.want)
+				t.Errorf("ParseConfigFromGr/%s got = %v, want %v", tt.name, got, tt.want)
 			}
 		})
 	}
 }
 
 func testFileWithContent(t *testing.T, content string) *os.File {
-	f, err := ioutil.TempFile("", "")
+	folder := t.TempDir()
+
+	f, err := os.CreateTemp(folder, "")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
