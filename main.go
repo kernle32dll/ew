@@ -27,7 +27,7 @@ func main() {
 
 	start := time.Now()
 	defer func() {
-		fmt.Printf("\nExecuted in %s\n", time.Now().Sub(start))
+		fmt.Printf("\nExecuted in %s\n", time.Since(start))
 	}()
 
 	if err := exec.Execute(); err != nil {

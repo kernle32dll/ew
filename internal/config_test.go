@@ -3,7 +3,6 @@ package internal
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -128,13 +127,7 @@ func TestConfig_WriteConfig(t *testing.T) {
 		"another-tag": []string{"path4", "path3"},
 	}
 
-	folder, err := ioutil.TempDir("", "")
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-	defer func() {
-		clearFolder(t, folder)
-	}()
+	folder := t.TempDir()
 
 	// --------------
 
@@ -189,7 +182,7 @@ func TestConfig_WriteConfig(t *testing.T) {
 			}
 
 			if got != "" {
-				gotContent, err := ioutil.ReadFile(got)
+				gotContent, err := os.ReadFile(got)
 				if err != nil {
 					t.Error(err)
 					return
@@ -203,29 +196,10 @@ func TestConfig_WriteConfig(t *testing.T) {
 	}
 }
 
-func clearFolder(t *testing.T, folder string) {
-	if err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
-		if folder == path {
-			return nil
-		}
-		return os.Remove(path)
-	}); err != nil {
-		t.Logf("failed to remove file: %s", err)
-	}
-
-	if err := os.Remove(folder); err != nil {
-		t.Logf("failed to remove folder: %s", err)
-	}
-}
-
 func writeTempFile(t *testing.T, filename string, fileString string) string {
-	folder, err := ioutil.TempDir("", "")
-	if err != nil {
-		t.Fatal(err.Error())
-	}
+	folder := t.TempDir()
 
-	if err := ioutil.WriteFile(filepath.Join(folder, filename), []byte(fileString), 0600); err != nil {
-		clearFolder(t, folder)
+	if err := os.WriteFile(filepath.Join(folder, filename), []byte(fileString), 0600); err != nil {
 		t.Fatal(err.Error())
 	}
 
@@ -251,9 +225,6 @@ func TestParseConfigFromFolder(t *testing.T) {
 		fileString := `{"tags": {"some-tag": ["path1", "path2"]}}`
 
 		folder := writeTempFile(t, ".ewconfig.json", fileString)
-		defer func() {
-			clearFolder(t, folder)
-		}()
 
 		want := Config{Source: JsonSrc, LoadedFrom: folder, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
 		wantOutput := ""
@@ -270,9 +241,6 @@ func TestParseConfigFromFolder(t *testing.T) {
 
 	t.Run("json config found, but borked", func(t *testing.T) {
 		folder := writeTempFile(t, ".ewconfig.json", `{]`)
-		defer func() {
-			clearFolder(t, folder)
-		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
 		wantOutput := fmt.Sprintf(
@@ -298,9 +266,6 @@ func TestParseConfigFromFolder(t *testing.T) {
 
 	t.Run("json config found, but EOF", func(t *testing.T) {
 		folder := writeTempFile(t, ".ewconfig.json", ``)
-		defer func() {
-			clearFolder(t, folder)
-		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
 		wantOutput := fmt.Sprintf(
@@ -327,9 +292,6 @@ tags:
 `
 
 		folder := writeTempFile(t, ".ewconfig.yml", fileString)
-		defer func() {
-			clearFolder(t, folder)
-		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: Tags{"some-tag": []string{"path1", "path2"}}}
 		wantOutput := ""
@@ -346,9 +308,6 @@ tags:
 
 	t.Run("yaml config found, but borked", func(t *testing.T) {
 		folder := writeTempFile(t, ".ewconfig.yml", `t{]`)
-		defer func() {
-			clearFolder(t, folder)
-		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
 		wantOutput := fmt.Sprintf(
@@ -368,9 +327,6 @@ tags:
 
 	t.Run("yaml config found, but EOF", func(t *testing.T) {
 		folder := writeTempFile(t, ".ewconfig.yml", ``)
-		defer func() {
-			clearFolder(t, folder)
-		}()
 
 		want := Config{Source: YamlSrc, LoadedFrom: folder, Tags: map[string][]string{}}
 		wantOutput := fmt.Sprintf(
