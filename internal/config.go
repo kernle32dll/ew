@@ -14,7 +14,7 @@ import (
 )
 
 // ReadSource determinate from which source a given config was read,
-//and/or in which format it should be persisted.
+// and/or in which format it should be persisted.
 type ReadSource int
 
 const (
@@ -123,7 +123,7 @@ func (c Config) GetPathsOfTagSorted(tag string) []string {
 	return paths
 }
 
-// GetPathsOfTagSorted returns a sorted list of paths of the given tags.
+// GetPathsOfTagsSorted returns a sorted list of paths of the given tags.
 // Note, paths are sorted tag agnostic, so mixing up might occur.
 // Duplicates are also filtered out.
 func (c Config) GetPathsOfTagsSorted(tags ...string) []string {
