@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
 	"io"
 	"os"
 	"path/filepath"
 	"sort"
 
-	"gopkg.in/yaml.v2"
+	"github.com/fatih/color"
+	"gopkg.in/yaml.v3"
 )
 
 // ReadSource determinate from which source a given config was read,
